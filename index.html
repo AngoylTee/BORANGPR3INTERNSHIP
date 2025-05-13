@@ -23,6 +23,10 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        .header img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
         .confidential {
             color: red;
             font-weight: bold;
@@ -123,6 +127,7 @@
         #signatureCanvas {
             border: 1px solid #ddd;
             margin-bottom: 10px;
+            background-color: white;
         }
         .evaluations-table {
             width: 100%;
@@ -157,12 +162,44 @@
                 width: 100%;
             }
         }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="header">
+            <img src="https://via.placeholder.com/150x50?text=IPG+Logo" alt="IPG Logo">
             <h2>PR3 Internship Evaluation System</h2>
         </div>
         
@@ -190,6 +227,7 @@
             <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             <button id="viewRecordsBtn" class="btn">View Records</button>
             <button id="newEvaluationBtn" class="btn">New Evaluation</button>
+            <button id="downloadDataBtn" class="btn">Download All Data</button>
         </div>
         
         <!-- Dashboard Screen -->
@@ -218,10 +256,14 @@
         <div id="evaluationFormScreen" class="hidden">
             <div class="header">
                 <h1>LAMPIRAN 3</h1>
-                <h2>PR3 BORANG PENILAIAN INTERNSHIP</h2>
+                <h2>PR3</h2>
+                <h3>SULIT</h3>
+                <img src="https://via.placeholder.com/100x50?text=IPG+Logo" alt="IPG Logo">
                 <h3>INSTITUT PENDIDIKAN GURU</h3>
-                <h3>KEMENTERIAN PENDIDIKAN MALAYSIA</h3>
-              </div>
+                <h3>KEMENTERIAN PENDIDIKAN</h3>
+                <h3>MALAYSIA</h3>
+                <h3>BORANG PENILAIAN INTERNSHIP</h3>
+            </div>
 
             <div class="confidential">SULIT - Dokumen ini adalah untuk kegunaan rasmi sahaja</div>
 
@@ -277,10 +319,10 @@
 
                 <!-- Section A: Project Planning -->
                 <div class="form-section">
-                    <h3>A. PERANCANGAN PROJEK/AKTIVITI (15%)</h3>
+                    <h3>A. PERANCANGAN PROJEK/AKTIVITI (15%) <span class="rubric-link" onclick="showRubric('A')">[Lihat Rubrik]</span></h3>
                     <div class="tahap-selector">
                         <label>Tahap:</label>
-                        <select id="aTahap" required>
+                        <select id="aTahap" required onchange="updateMarkAndComments('a', 15)">
                             <option value="">Pilih Tahap</option>
                             <option value="1">1 - Terdapat banyak kelemahan</option>
                             <option value="2">2 - Terdapat beberapa kelemahan</option>
@@ -298,16 +340,16 @@
                     
                     <div class="form-group">
                         <label>Markah ( /15 ):</label>
-                        <input type="number" id="aMark" step="0.1" min="0" max="15">
+                        <input type="number" id="aMark" step="0.1" min="0" max="15" onchange="updateTahapFromMark('a', 15)">
                     </div>
                 </div>
 
                 <!-- Section B: Project Implementation -->
                 <div class="form-section">
-                    <h3>B. PELAKSANAAN PROJEK/AKTIVITI (40%)</h3>
+                    <h3>B. PELAKSANAAN PROJEK/AKTIVITI (40%) <span class="rubric-link" onclick="showRubric('B')">[Lihat Rubrik]</span></h3>
                     <div class="tahap-selector">
                         <label>Tahap:</label>
-                        <select id="bTahap" required>
+                        <select id="bTahap" required onchange="updateMarkAndComments('b', 40)">
                             <option value="">Pilih Tahap</option>
                             <option value="1">1 - Terdapat banyak kelemahan</option>
                             <option value="2">2 - Terdapat beberapa kelemahan</option>
@@ -325,16 +367,16 @@
                     
                     <div class="form-group">
                         <label>Markah ( /40 ):</label>
-                        <input type="number" id="bMark" step="0.1" min="0" max="40">
+                        <input type="number" id="bMark" step="0.1" min="0" max="40" onchange="updateTahapFromMark('b', 40)">
                     </div>
                 </div>
 
                 <!-- Section C: Project Report -->
                 <div class="form-section">
-                    <h3>C. PENULISAN LAPORAN PROJEK/AKTIVITI (15%)</h3>
+                    <h3>C. PENULISAN LAPORAN PROJEK/AKTIVITI (15%) <span class="rubric-link" onclick="showRubric('C')">[Lihat Rubrik]</span></h3>
                     <div class="tahap-selector">
                         <label>Tahap:</label>
-                        <select id="cTahap" required>
+                        <select id="cTahap" required onchange="updateMarkAndComments('c', 15)">
                             <option value="">Pilih Tahap</option>
                             <option value="1">1 - Terdapat banyak kelemahan</option>
                             <option value="2">2 - Terdapat beberapa kelemahan</option>
@@ -352,16 +394,16 @@
                     
                     <div class="form-group">
                         <label>Markah ( /15 ):</label>
-                        <input type="number" id="cMark" step="0.1" min="0" max="15">
+                        <input type="number" id="cMark" step="0.1" min="0" max="15" onchange="updateTahapFromMark('c', 15)">
                     </div>
                 </div>
 
                 <!-- Section D: Reflection Notes -->
                 <div class="form-section">
-                    <h3>D. CATATAN REFLEKSI (20%)</h3>
+                    <h3>D. CATATAN REFLEKSI (20%) <span class="rubric-link" onclick="showRubric('D')">[Lihat Rubrik]</span></h3>
                     <div class="tahap-selector">
                         <label>Tahap:</label>
-                        <select id="dTahap" required>
+                        <select id="dTahap" required onchange="updateMarkAndComments('d', 20)">
                             <option value="">Pilih Tahap</option>
                             <option value="1">1 - Terdapat banyak kelemahan</option>
                             <option value="2">2 - Terdapat beberapa kelemahan</option>
@@ -379,16 +421,16 @@
                     
                     <div class="form-group">
                         <label>Markah ( /20 ):</label>
-                        <input type="number" id="dMark" step="0.1" min="0" max="20">
+                        <input type="number" id="dMark" step="0.1" min="0" max="20" onchange="updateTahapFromMark('d', 20)">
                     </div>
                 </div>
 
                 <!-- Section E: Portfolio Development -->
                 <div class="form-section">
-                    <h3>E. PEMBINAAN PORTFOLIO (10%)</h3>
+                    <h3>E. PEMBINAAN PORTFOLIO (10%) <span class="rubric-link" onclick="showRubric('E')">[Lihat Rubrik]</span></h3>
                     <div class="tahap-selector">
                         <label>Tahap:</label>
-                        <select id="eTahap" required>
+                        <select id="eTahap" required onchange="updateMarkAndComments('e', 10)">
                             <option value="">Pilih Tahap</option>
                             <option value="1">1 - Terdapat banyak kelemahan</option>
                             <option value="2">2 - Terdapat beberapa kelemahan</option>
@@ -406,7 +448,7 @@
                     
                     <div class="form-group">
                         <label>Markah ( /10 ):</label>
-                        <input type="number" id="eMark" step="0.1" min="0" max="10">
+                        <input type="number" id="eMark" step="0.1" min="0" max="10" onchange="updateTahapFromMark('e', 10)">
                     </div>
                 </div>
 
@@ -444,52 +486,83 @@
         </div>
     </div>
 
+    <!-- Rubric Modal -->
+    <div id="rubricModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="rubricContent">
+                <h2 id="rubricTitle">Rubrik Penilaian</h2>
+                <div id="rubricDetails"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Fixed login credentials
         const FIXED_USERNAME = "Internship";
         const FIXED_PASSWORD = "UAPishebat";
         
-        // Rubric comments data from PR3 DAN RUBRIK.docx
-        const rubricComments = {
+        // Rubric data based on the document
+        const rubrics = {
             'A': {
-                '1': 'Perancangan projek/aktiviti tidak jelas, tidak teratur, strategi tidak sesuai, tidak ada sumber rujukan, Persembahan sangat lemah. Tidak mempunyai nilai-nilai komersial dan tidak berkemahiran dalam pengendalian pengurusan dan keusahawanan.',
-                '2': 'Perancangan projek/aktiviti kurang jelas, kurang teratur, strategi kurang sesuai, sumber rujukan sangat terhad, Persembahan lemah. Tidak mempunyai nilai-nilai komersial dan tidak berkemahiran dalam pengendalian pengurusan dan keusahawanan.',
-                '3': 'Perancangan projek/aktiviti jelas, tetapi kurang teratur, strategi sesuai, sumber rujukan terhad, persembahan mengikut format. Kurang mempunyai nilai-nilai komersial dan berkemahiran dalam pengendalian pengurusan dan keusahawanan.',
-                '4': 'Perancangan projek/aktiviti jelas dan teratur, strategi sesuai, sumber rujukan sesuai dengan tajuk, persembahan mengikut format. Mempunyai nilai-nilai komersial dan berkemahiran dalam pengendalian Pengurusan dan Keusahawanan.',
-                '5': 'Perancangan projek/aktiviti sangat jelas dan teratur, strategi sesuai, sumber rujukan pelbagai dan sesuai dengan tajuk, persembahan kreatif dan mengikut format. Mempunyai nilai-nilai komersial dan sangat berkemahiran dalam pengendalian Pengurusan dan Keusahawanan.'
+                title: 'Rubrik Perancangan Projek/Aktiviti (15%)',
+                description: 'Penilaian terhadap perancangan projek/aktiviti yang dilakukan oleh pelajar',
+                criteria: {
+                    1: "Perancangan projek/aktiviti tidak jelas, tidak teratur, strategi tidak sesuai, tidak ada sumber rujukan, Persembahan sangat lemah. Tidak mempunyai nilai-nilai komersial dan tidak berkemahiran dalam pengendalian pengurusan dan keusahawanan",
+                    2: "Perancangan projek/aktiviti kurang jelas, kurang teratur, strategi kurang sesuai, sumber rujukan sangat terhad, Persembahan lemah. Tidak mempunyai nilai-nilai komersial dan tidak berkemahiran dalam pengendalian pengurusan dan keusahawanan",
+                    3: "Perancangan projek/aktiviti jelas, tetapi kurang teratur, strategi sesuai, sumber rujukan terhad, persembahan mengikut format. Kurang mempunyai nilai-nilai komersial dan berkemahiran dalam pengendalian pengurusan dan keusahawanan",
+                    4: "Perancangan projek/aktiviti jelas dan teratur, strategi sesuai, sumber rujukan sesuai dengan tajuk, persembahan mengikut format. Mempunyai nilai-nilai komersial dan berkemahiran dalam pengendalian pengurusan dan keusahawanan",
+                    5: "Perancangan projek/aktiviti sangat jelas dan teratur, strategi sesuai, sumber rujukan pelbagai dan sesuai dengan tajuk, persembahan kreatif dan mengikut format. Mempunyai nilai-nilai komersial dan sangat berkemahiran dalam pengendalian pengurusan dan keusahawanan"
+                }
             },
             'B': {
-                '1': 'Tidak jelas, tidak teratur, tidak mengikut jadual perancangan. Tidak berinovasi dengan berbantukan pelbagai sumber dan teknologi.',
-                '2': 'Kurang jelas, kurang teratur, mengikut jadual perancangan. Kurang berinovasi dengan berbantukan pelbagai sumber dan teknologi.',
-                '3': 'Jelas, tetapi kurang teratur, mengikut jadual perancangan. Berinovasi dengan berbantukan pelbagai sumber dan teknologi.',
-                '4': 'Jelas dan teratur, mengikut jadual perancangan. Berinovasi dengan berbantukan pelbagai sumber dan teknologi.',
-                '5': 'Sangat jelas dan teratur, mengikut jadual perancangan. Sangat berinovasi dengan berbantukan pelbagai sumber dan teknologi.'
+                title: 'Rubrik Pelaksanaan Projek/Aktiviti (40%)',
+                description: 'Penilaian terhadap pelaksanaan projek/aktiviti oleh pelajar',
+                criteria: {
+                    1: "Tidak jelas, tidak teratur, tidak mengikut jadual perancangan. Tidak berinovasi dengan berbantukan pelbagai sumber dan teknologi",
+                    2: "Kurang jelas, kurang teratur, mengikut jadual perancangan. Tidak berinovasi dengan berbantukan pelbagai sumber dan teknologi",
+                    3: "Jelas, tetapi kurang teratur, mengikut jadual perancangan. Kurang berinovasi dengan berbantukan pelbagai sumber dan teknologi",
+                    4: "Jelas dan teratur, mengikut jadual perancangan. Berinovasi dengan berbantukan pelbagai sumber dan teknologi",
+                    5: "Sangat jelas dan teratur, mengikut jadual perancangan. Sangat berinovasi dengan berbantukan pelbagai sumber dan teknologi"
+                }
             },
             'C': {
-                '1': 'Tidak jelas, tidak teratur menyediakan laporan projek/aktiviti. Tiada cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti.',
-                '2': 'Kurang jelas, kurang teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti kurang jelas.',
-                '3': 'Jelas, tetapi kurang teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti kurang jelas. Unsur inovasi kurang jelas.',
-                '4': 'Jelas dan teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti jelas. Unsur inovasi jelas. Pemikiran Kritikal dan Pendekatan Saintifik.',
-                '5': 'Sangat jelas dan teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti sangat jelas. Unsur inovasi sangat jelas. Pemikiran kritikal dan Pendekatan Saintifik yang tepat.'
+                title: 'Rubrik Penulisan Laporan Projek (15%)',
+                description: 'Penilaian terhadap laporan projek/aktiviti yang dihasilkan',
+                criteria: {
+                    1: "Tidak jelas, tidak teratur menyediakan laporan projek/aktiviti. Tiada cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti",
+                    2: "Kurang jelas, kurang teratur menyediakan laporan projek/aktiviti. Tiada cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti",
+                    3: "Jelas, tetapi kurang teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti kurang jelas. Unsur inovasi kurang jelas.",
+                    4: "Jelas dan teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti jelas. Unsur inovasi jelas. Pemikiran Kritikal dan Pendekatan Saintifik",
+                    5: "Sangat jelas dan teratur menyediakan laporan projek/aktiviti. Cadangan penambahbaikan. Laporan akhir pelaksanaan projek/aktiviti sangat jelas. Unsur inovasi sangat jelas. Pemikiran kritikal dan Pendekatan Saintifik yang tepat"
+                }
             },
             'D': {
-                '1': 'Kurang berusaha untuk menilai diri. Tidak dapat menghubung kaitkan sebab dan akibat tentang tindakan yang telah diambil. Tidak menunjukkan usaha untuk merancang dan membuat tindakan susulan. Tidak menulis refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan.',
-                '2': 'Ada usaha untuk menilai kekuatan dan kelemahan diri, tetapi tidak dapat menghubung kaitkan sebab dan akibat tentang tindakan yang telah diambil. Kurang mengaitkan situasi dan pengalaman untuk membuat inferens. Penulisan refleksi kurang jelas berdasarkan projek/aktiviti berinovasi yang dijalankan.',
-                '3': 'Sentiasa berusaha menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat yang telah diambil. Dapat mengaitkan situasi dan pengalaman untuk membuat inferens. Refleksi ditulis berdasarkan projek/aktiviti berinovasi yang dijalankan.',
-                '4': 'Berjaya menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat tentang tindakan diambil. Dapat meramal kesan sesuatu tindakan dan bertindak berlandaskan bukti, seterusnya merancang langkah susulan. Refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan.',
-                '5': 'Sangat berjaya menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat tentang tindakan diambil. Dapat meramal kesan sesuatu tindakan dan bertindak berlandaskan bukti, seterusnya merancang langkah susulan. Refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan.'
+                title: 'Rubrik Catatan Refleksi (20%)',
+                description: 'Penilaian terhadap refleksi yang dibuat oleh pelajar',
+                criteria: {
+                    1: "Kurang berusaha untuk menilai diri. Tidak dapat menghubungkaitkan sebab dan akibat tentang tindakan yang telah diambil. Tidak menunjukkan usaha untuk merancang dan membuat tindakan susulan. Tidak menulis refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan",
+                    2: "Ada usaha untuk menilai kekuatan dan kelemahan diri, tetapi tidak dapat menghubungkaitkan sebab dan akibat tentang tindakan yang telah diambil. Kurang mengaitkan situasi dan pengalaman untuk membuat inferens. Penulisan refleksi kurang jelas berdasarkan projek/aktiviti berinovasi yang dijalankan",
+                    3: "Sentiasa berusaha menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat yang telah diambil. Dapat mengaitkan situasi dan pengalaman untuk membuat inferens. Refleksi ditulis berdasarkan projek/aktiviti berinovasi yang dijalankan",
+                    4: "Berjaya menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat tentang tindakan yang diambil. Dapat meramal kesan sesuatu tindakan dan bertindak berlandaskan bukti, seterusnya merancang langkah susulan. Refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan",
+                    5: "Sangat berjaya menilai kekuatan dan kelemahan diri. Dapat menghubungkaitkan sebab dan akibat tentang tindakan yang diambil. Dapat meramal kesan sesuatu tindakan dan bertindak berlandaskan bukti, seterusnya merancang langkah susulan. Refleksi berdasarkan projek/aktiviti berinovasi yang dijalankan"
+                }
             },
             'E': {
-                '1': 'Tidak melengkapkan Portfolio seperti yang ditetapkan. Tidak berusaha untuk menambah maklumat dan dokumen yang relevan. Tidak meneruskan penulisan jurnal reflektif.',
-                '2': 'Kurang berusaha untuk mengemaskinikan portfolio dengan maklumat dan dokumen baru. Maklumat yang diberikan kurang berkaitan dengan objektif internship. Penulisan jurnal reflektif kurang mengenalpasti isu dan langkah-langkah penyelesaiannya.',
-                '3': 'Penyediaan portfolio kemas dan menepati objektif penyediaan portfolio internship. Terdapat penambahan maklumat dan dokumen yang relevan dengan objektif internship, tetapi pengolahannya kurang kemas, kreatif dan teratur. Dapat mengenalpasti isu dalam penulisan jurnal reflektif tetapi kurang berupaya mengupas isu serta mencari penyelesaiannya.',
-                '4': 'Penyediaan portfolio kemas, kreatif dan teratur serta menepati objektif penyediaan portfolio internship. Menunjukkan kesungguhan dan kerajinan dalam proses pembinaan portfolio - dokumen dan maklumat yang ditambah itu relevan. Penulisan jurnal reflektif diteruskan dan menunjukkan amalan refleksi yang jelas.',
-                '5': 'Penyediaan portfolio amat kemas, kreatif dan teratur serta amat menepati objektif penyediaan portfolio internship. Menunjukkan kesungguhan dan kerajinan dalam proses pembinaan portfolio - dokumen dan maklumat yang ditambah itu amat relevan. Penulisan jurnal reflektif menunjukkan amalan refleksi yang amat jelas.'
+                title: 'Rubrik Pembinaan Portfolio (10%)',
+                description: 'Penilaian terhadap portfolio yang dibina oleh pelajar',
+                criteria: {
+                    1: "Tidak melengkapkan Portfolio seperti yang ditetapkan. Tidak berusaha untuk menambah maklumat dan dokumen yang relevan. Tidak meneruskan penulisan jurnal reflektif",
+                    2: "Kurang berusaha untuk mengemaskinikan portfolio dengan maklumat dan dokumen baru. Maklumat yang diberikan kurang berkaitan dengan objektif internship. Penulisan jurnal reflektif kurang mengenalpasti isu dan langkah-langkah penyelesaiannya.",
+                    3: "Penyediaan portfolio kemas dan menepati objektif penyediaan portfolio internship. Terdapat penambahan maklumat dan dokumen yang relevan dengan objektif internship, tetapi pengolahannya kurang kemas, kreatif dan teratur. Dapat mengenalpasti isu dalam penulisan jurnal reflektif tetapi kurang berupaya mengupas isu serta mencari penyelesaiannya.",
+                    4: "Penyediaan portfolio kemas, kreatif dan teratur serta menepati objektif penyediaan portfolio internship. Menunjukkan kesungguhan dan kerajinan dalam proses pembinaan portfolio - dokumen dan maklumat yang ditambah itu relevan. Penulisan jurnal reflektif diteruskan dan menunjukkan amalan refleksi yang jelas",
+                    5: "Penyediaan portfolio amat kemas, kreatif dan teratur serta amat menepati objektif penyediaan portfolio internship. Menunjukkan kesungguhan dan kerajinan dalam proses pembinaan portfolio - dokumen dan maklumat yang ditambah itu amat relevan. Penulisan jurnal reflektif menunjukkan amalan refleksi yang amat jelas"
+                }
             }
         };
         
-        // Sample data
-        let evaluations = [
+        // Load evaluations from localStorage or use sample data
+        let evaluations = JSON.parse(localStorage.getItem('evaluations')) || [
             {
                 id: 1,
                 studentName: "Ali bin Abu",
@@ -500,19 +573,19 @@
                 school: "SK Seri Permata",
                 ipgCampus: "IPG Kampus Pendidikan Teknik",
                 aTahap: 3,
-                aComments: rubricComments['A']['3'],
+                aComments: "Perancangan yang baik tetapi boleh diperbaiki",
                 aMark: 8.9,
                 bTahap: 4,
-                bComments: rubricComments['B']['4'],
+                bComments: "Pelaksanaan projek sangat baik",
                 bMark: 31.6,
                 cTahap: 3,
-                cComments: rubricComments['C']['3'],
+                cComments: "Laporan lengkap tetapi boleh lebih kreatif",
                 cMark: 8.9,
                 dTahap: 4,
-                dComments: rubricComments['D']['4'],
+                dComments: "Refleksi yang mendalam dan kritikal",
                 dMark: 15.8,
                 eTahap: 5,
-                eComments: rubricComments['E']['5'],
+                eComments: "Portfolio sangat lengkap dan kreatif",
                 eMark: 10,
                 totalMark: 75.2,
                 mentorName: "Dr. Ahmad",
@@ -521,130 +594,137 @@
             }
         ];
         
-        // DOM Elements
-        const loginScreen = document.getElementById('loginScreen');
-        const appContainer = document.getElementById('appContainer');
-        const loginForm = document.getElementById('loginForm');
-        const loginError = document.getElementById('loginError');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const viewRecordsBtn = document.getElementById('viewRecordsBtn');
-        const newEvaluationBtn = document.getElementById('newEvaluationBtn');
-        const dashboardScreen = document.getElementById('dashboardScreen');
-        const evaluationFormScreen = document.getElementById('evaluationFormScreen');
-        const userNameSpan = document.getElementById('userName');
-        const userCampusSpan = document.getElementById('userCampus');
-        const evaluationsList = document.getElementById('evaluationsList');
-        const evaluationForm = document.getElementById('evaluationForm');
-        const printFormBtn = document.getElementById('printFormBtn');
-        const cancelFormBtn = document.getElementById('cancelFormBtn');
+        // Save evaluations to localStorage
+        function saveEvaluationsToStorage() {
+            localStorage.setItem('evaluations', JSON.stringify(evaluations));
+        }
         
-        // Initialize
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize signature pad
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            
+            // Signature pad event listeners
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch support
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+                [lastX, lastY] = [e.offsetX, e.offsetY];
+                updateSignatureData();
+            }
+            
+            function handleTouchStart(e) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+                isDrawing = true;
+            }
+            
+            function handleTouchMove(e) {
+                e.preventDefault();
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                [lastX, lastY] = [x, y];
+                updateSignatureData();
+            }
+            
+            function stopDrawing() {
+                isDrawing = false;
+            }
+            
+            function updateSignatureData() {
+                document.getElementById('signatureData').value = canvas.toDataURL();
+            }
+            
+            document.getElementById('clearSignature').addEventListener('click', function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                document.getElementById('signatureData').value = '';
+            });
+            
             // Login form submission
-            loginForm.addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const username = document.getElementById('loginUsername').value;
                 const password = document.getElementById('loginPassword').value;
                 
                 if (username === FIXED_USERNAME && password === FIXED_PASSWORD) {
-                    currentUser = { 
-                        username: FIXED_USERNAME,
-                        name: "Pensyarah Penilai",
-                        campus: "IPG Kampus Anda"
-                    };
-                    loginScreen.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                    userNameSpan.textContent = currentUser.name;
-                    userCampusSpan.textContent = currentUser.campus;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    document.getElementById('loginError').classList.add('hidden');
                     loadEvaluations();
                 } else {
-                    loginError.textContent = 'Username atau password salah';
-                    loginError.classList.remove('hidden');
+                    document.getElementById('loginError').classList.remove('hidden');
                 }
             });
             
             // Logout button
-            logoutBtn.addEventListener('click', function() {
-                currentUser = null;
-                appContainer.classList.add('hidden');
-                loginScreen.classList.remove('hidden');
-                loginError.classList.add('hidden');
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                document.getElementById('appContainer').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
                 document.getElementById('loginUsername').value = '';
                 document.getElementById('loginPassword').value = '';
             });
             
             // Navigation buttons
-            viewRecordsBtn.addEventListener('click', function() {
-                currentScreen = 'dashboard';
-                dashboardScreen.classList.remove('hidden');
-                evaluationFormScreen.classList.add('hidden');
+            document.getElementById('viewRecordsBtn').addEventListener('click', function() {
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                document.getElementById('evaluationFormScreen').classList.add('hidden');
                 loadEvaluations();
             });
             
-            newEvaluationBtn.addEventListener('click', function() {
-                currentScreen = 'form';
-                dashboardScreen.classList.add('hidden');
-                evaluationFormScreen.classList.remove('hidden');
+            document.getElementById('newEvaluationBtn').addEventListener('click', function() {
+                document.getElementById('dashboardScreen').classList.add('hidden');
+                document.getElementById('evaluationFormScreen').classList.remove('hidden');
                 resetForm();
             });
             
-            cancelFormBtn.addEventListener('click', function() {
-                currentScreen = 'dashboard';
-                dashboardScreen.classList.remove('hidden');
-                evaluationFormScreen.classList.add('hidden');
+            document.getElementById('cancelFormBtn').addEventListener('click', function() {
+                document.getElementById('dashboardScreen').classList.remove('hidden');
+                document.getElementById('evaluationFormScreen').classList.add('hidden');
             });
             
             // Print button
-            printFormBtn.addEventListener('click', function() {
+            document.getElementById('printFormBtn').addEventListener('click', function() {
                 window.print();
             });
             
+            // Download data button
+            document.getElementById('downloadDataBtn').addEventListener('click', downloadAllData);
+            
             // Form submission
-            evaluationForm.addEventListener('submit', function(e) {
+            document.getElementById('evaluationForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveEvaluation();
-            });
-            
-            // Initialize signature pad
-            const canvas = document.getElementById('signatureCanvas');
-            const signaturePad = new SignaturePad(canvas);
-            document.getElementById('clearSignature').addEventListener('click', function() {
-                signaturePad.clear();
-                document.getElementById('signatureData').value = '';
-            });
-            
-            // Tahap change handlers
-            document.getElementById('aTahap').addEventListener('change', function() {
-                updateMarkAndComments('a', 15);
-            });
-            document.getElementById('bTahap').addEventListener('change', function() {
-                updateMarkAndComments('b', 40);
-            });
-            document.getElementById('cTahap').addEventListener('change', function() {
-                updateMarkAndComments('c', 15);
-            });
-            document.getElementById('dTahap').addEventListener('change', function() {
-                updateMarkAndComments('d', 20);
-            });
-            document.getElementById('eTahap').addEventListener('change', function() {
-                updateMarkAndComments('e', 10);
-            });
-            
-            // Mark change handlers
-            document.getElementById('aMark').addEventListener('change', function() {
-                updateTahapFromMark('a', 15);
-            });
-            document.getElementById('bMark').addEventListener('change', function() {
-                updateTahapFromMark('b', 40);
-            });
-            document.getElementById('cMark').addEventListener('change', function() {
-                updateTahapFromMark('c', 15);
-            });
-            document.getElementById('dMark').addEventListener('change', function() {
-                updateTahapFromMark('d', 20);
-            });
-            document.getElementById('eMark').addEventListener('change', function() {
-                updateTahapFromMark('e', 10);
             });
             
             // Load initial data
@@ -652,7 +732,9 @@
         });
         
         function loadEvaluations() {
+            const evaluationsList = document.getElementById('evaluationsList');
             evaluationsList.innerHTML = '';
+            
             evaluations.forEach(eval => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -661,8 +743,8 @@
                     <td>${eval.evaluationDate}</td>
                     <td>${eval.totalMark}%</td>
                     <td>
-                        <button onclick="editEvaluation(${eval.id})" class="btn btn-sm">Edit</button>
-                        <button onclick="printEvaluation(${eval.id})" class="btn btn-sm">Print</button>
+                        <button onclick="editEvaluation(${eval.id})" class="btn">Edit</button>
+                        <button onclick="printEvaluation(${eval.id})" class="btn">Print</button>
                     </td>
                 `;
                 evaluationsList.appendChild(row);
@@ -671,7 +753,7 @@
         
         function resetForm() {
             document.getElementById('evaluationId').value = '';
-            document.getElementById('ipgCampus').value = currentUser.campus;
+            document.getElementById('ipgCampus').value = '';
             document.getElementById('studentName').value = '';
             document.getElementById('icNumber').value = '';
             document.getElementById('program').value = 'PISMP';
@@ -694,10 +776,12 @@
             document.getElementById('eComments').value = '';
             document.getElementById('eMark').value = '';
             document.getElementById('totalMark').value = '';
-            document.getElementById('mentorName').value = currentUser.name;
+            document.getElementById('mentorName').value = '';
             document.getElementById('evaluationDate').valueAsDate = new Date();
-            const signaturePad = SignaturePad.getInstance(document.getElementById('signatureCanvas'));
-            signaturePad.clear();
+            
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             document.getElementById('signatureData').value = '';
             
             // Reset mark ranges
@@ -711,12 +795,11 @@
         function editEvaluation(id) {
             const evaluation = evaluations.find(e => e.id === id);
             if (evaluation) {
-                currentScreen = 'form';
-                dashboardScreen.classList.add('hidden');
-                evaluationFormScreen.classList.remove('hidden');
+                document.getElementById('dashboardScreen').classList.add('hidden');
+                document.getElementById('evaluationFormScreen').classList.remove('hidden');
                 
                 document.getElementById('evaluationId').value = evaluation.id;
-                document.getElementById('ipgCampus').value = evaluation.ipgCampus || currentUser.campus;
+                document.getElementById('ipgCampus').value = evaluation.ipgCampus;
                 document.getElementById('studentName').value = evaluation.studentName;
                 document.getElementById('icNumber').value = evaluation.icNumber;
                 document.getElementById('program').value = evaluation.program;
@@ -739,7 +822,7 @@
                 document.getElementById('eComments').value = evaluation.eComments;
                 document.getElementById('eMark').value = evaluation.eMark;
                 document.getElementById('totalMark').value = evaluation.totalMark;
-                document.getElementById('mentorName').value = evaluation.mentorName || currentUser.name;
+                document.getElementById('mentorName').value = evaluation.mentorName;
                 document.getElementById('evaluationDate').value = evaluation.evaluationDate;
                 
                 // Update mark ranges
@@ -750,8 +833,13 @@
                 updateMarkRange('e', evaluation.eTahap, 10);
                 
                 if (evaluation.signatureData) {
-                    const signaturePad = SignaturePad.getInstance(document.getElementById('signatureCanvas'));
-                    signaturePad.fromDataURL(evaluation.signatureData);
+                    const canvas = document.getElementById('signatureCanvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = evaluation.signatureData;
                     document.getElementById('signatureData').value = evaluation.signatureData;
                 }
             }
@@ -765,8 +853,8 @@
         }
         
         function saveEvaluation() {
-            const signaturePad = SignaturePad.getInstance(document.getElementById('signatureCanvas'));
-            const signatureData = signaturePad.toDataURL();
+            const canvas = document.getElementById('signatureCanvas');
+            const signatureData = canvas.toDataURL();
             
             const evaluation = {
                 id: document.getElementById('evaluationId').value || Date.now(),
@@ -805,9 +893,10 @@
                 evaluations.push(evaluation);
             }
             
-            currentScreen = 'dashboard';
-            dashboardScreen.classList.remove('hidden');
-            evaluationFormScreen.classList.add('hidden');
+            saveEvaluationsToStorage();
+            
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            document.getElementById('evaluationFormScreen').classList.add('hidden');
             loadEvaluations();
         }
         
@@ -816,15 +905,12 @@
             const mark = calculateMark(tahap, maxMark);
             document.getElementById(`${section}Mark`).value = mark.toFixed(1);
             updateMarkRange(section, tahap, maxMark);
-            
-            // Update comments based on selected tahap
-            if (tahap && rubricComments[section] && rubricComments[section][tahap]) {
-                document.getElementById(`${section}Comments`).value = rubricComments[section][tahap];
-            } else {
-                document.getElementById(`${section}Comments`).value = '';
-            }
-            
             updateTotalMark();
+            
+            // Auto-fill comments based on rubric
+            if (tahap && rubrics[section] && rubrics[section].criteria[tahap]) {
+                document.getElementById(`${section}Comments`).value = rubrics[section].criteria[tahap];
+            }
         }
         
         function updateTahapFromMark(section, maxMark) {
@@ -832,14 +918,6 @@
             const tahap = calculateTahap(mark, maxMark);
             document.getElementById(`${section}Tahap`).value = tahap;
             updateMarkRange(section, tahap, maxMark);
-            
-            // Update comments based on calculated tahap
-            if (tahap && rubricComments[section] && rubricComments[section][tahap]) {
-                document.getElementById(`${section}Comments`).value = rubricComments[section][tahap];
-            } else {
-                document.getElementById(`${section}Comments`).value = '';
-            }
-            
             updateTotalMark();
         }
         
@@ -883,97 +961,59 @@
             document.getElementById('totalMark').value = total.toFixed(1);
         }
         
-        // Simple signature pad implementation
-        class SignaturePad {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.drawing = false;
-                this.lastX = 0;
-                this.lastY = 0;
-                
-                // Set up event listeners
-                canvas.addEventListener('mousedown', this.startDrawing.bind(this));
-                canvas.addEventListener('mousemove', this.draw.bind(this));
-                canvas.addEventListener('mouseup', this.stopDrawing.bind(this));
-                canvas.addEventListener('mouseout', this.stopDrawing.bind(this));
-                
-                // Touch support
-                canvas.addEventListener('touchstart', this.startDrawing.bind(this));
-                canvas.addEventListener('touchmove', this.draw.bind(this));
-                canvas.addEventListener('touchend', this.stopDrawing.bind(this));
-                
-                this.clear();
+        function showRubric(section) {
+            const rubric = rubrics[section];
+            document.getElementById('rubricTitle').textContent = rubric.title;
+            
+            let html = `<p><strong>Deskripsi:</strong> ${rubric.description}</p>`;
+            html += '<h3>Kriteria Penilaian:</h3>';
+            
+            for (let i = 1; i <= 5; i++) {
+                html += `<p><strong>Tahap ${i}:</strong> ${rubric.criteria[i]}</p>`;
             }
             
-            startDrawing(e) {
-                this.drawing = true;
-                const pos = this.getPosition(e);
-                this.lastX = pos.x;
-                this.lastY = pos.y;
-                e.preventDefault();
-            }
+            document.getElementById('rubricDetails').innerHTML = html;
+            document.getElementById('rubricModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('rubricModal').style.display = 'none';
+        }
+        
+        function downloadAllData() {
+            // Convert evaluations to CSV
+            let csv = 'ID,Nama Pelajar,No.K/P,Program,Ambilan,Pengkhususan,Sekolah,IPG Kampus,';
+            csv += 'A-Tahap,A-Markah,A-Ulasan,B-Tahap,B-Markah,B-Ulasan,C-Tahap,C-Markah,C-Ulasan,';
+            csv += 'D-Tahap,D-Markah,D-Ulasan,E-Tahap,E-Markah,E-Ulasan,Total Markah,Nama Mentor,Tarikh\n';
             
-            draw(e) {
-                if (!this.drawing) return;
-                
-                const pos = this.getPosition(e);
-                this.ctx.beginPath();
-                this.ctx.moveTo(this.lastX, this.lastY);
-                this.ctx.lineTo(pos.x, pos.y);
-                this.ctx.stroke();
-                this.lastX = pos.x;
-                this.lastY = pos.y;
-                e.preventDefault();
-            }
+            evaluations.forEach(eval => {
+                csv += `"${eval.id}","${eval.studentName}","${eval.icNumber}","${eval.program}","${eval.intakeYear}",`;
+                csv += `"${eval.specialization}","${eval.school}","${eval.ipgCampus}",`;
+                csv += `"${eval.aTahap}","${eval.aMark}","${eval.aComments.replace(/"/g, '""')}",`;
+                csv += `"${eval.bTahap}","${eval.bMark}","${eval.bComments.replace(/"/g, '""')}",`;
+                csv += `"${eval.cTahap}","${eval.cMark}","${eval.cComments.replace(/"/g, '""')}",`;
+                csv += `"${eval.dTahap}","${eval.dMark}","${eval.dComments.replace(/"/g, '""')}",`;
+                csv += `"${eval.eTahap}","${eval.eMark}","${eval.eComments.replace(/"/g, '""')}",`;
+                csv += `"${eval.totalMark}","${eval.mentorName}","${eval.evaluationDate}"\n`;
+            });
             
-            stopDrawing() {
-                this.drawing = false;
-            }
-            
-            clear() {
-                this.ctx.fillStyle = 'white';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.strokeStyle = 'black';
-                this.ctx.lineWidth = 2;
-                this.ctx.lineCap = 'round';
-            }
-            
-            getPosition(e) {
-                const rect = this.canvas.getBoundingClientRect();
-                let x, y;
-                
-                if (e.type.includes('touch')) {
-                    x = e.touches[0].clientX - rect.left;
-                    y = e.touches[0].clientY - rect.top;
-                } else {
-                    x = e.clientX - rect.left;
-                    y = e.clientY - rect.top;
-                }
-                
-                return { x, y };
-            }
-            
-            toDataURL() {
-                return this.canvas.toDataURL();
-            }
-            
-            fromDataURL(dataURL) {
-                const img = new Image();
-                img.onload = () => {
-                    this.ctx.drawImage(img, 0, 0);
-                };
-                img.src = dataURL;
-            }
-            
-            static getInstance(canvas) {
-                return new SignaturePad(canvas);
-            }
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'evaluasi_internship.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
         
         // Make functions available globally for HTML onclick attributes
         window.editEvaluation = editEvaluation;
         window.printEvaluation = printEvaluation;
+        window.showRubric = showRubric;
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
